@@ -1,0 +1,14 @@
+version: '3'
+services:
+  web:
+    build: ./app  # Místo "image" použijeme "build" pro definici vlastního Dockerfile
+    volumes:
+      - ./app:/app
+    ports:
+      - "0.0.0.0:8000:8000"
+    depends_on:
+      - db
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: example
