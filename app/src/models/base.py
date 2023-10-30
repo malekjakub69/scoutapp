@@ -6,15 +6,17 @@ from urllib.parse import unquote
 import sqlalchemy.exc
 from flask import current_app
 from logger import logger
-from pyodbc import DataError
+from sqlalchemy.orm import DeclarativeBase
 from src.models import db
 from src.translations.translator import Translator
 from werkzeug.exceptions import BadRequest, InternalServerError
+from sqlalchemy.orm import mapped_column
+from sqlalchemy import Table, Column, Integer, String, Date
 
 T = TypeVar("T", bound="BaseModel")
 
 
-class BaseModel(db.Model):
+class BaseModel(DeclarativeBase):
     __abstract__ = True
 
     def __str__(self):
@@ -30,7 +32,11 @@ class BaseModel(db.Model):
 
     @classmethod
     def get_items(
-        cls: Type[T], params: dict, default_params: dict, with_pagination=False, resource_filter=None
+        cls: Type[T],
+        params: dict,
+        default_params: dict,
+        with_pagination=False,
+        resource_filter=None,
     ) -> dict:
         """
         Base method for getting items. It allows filtering, sorting and pagination. It can be parametrized by
@@ -68,7 +74,7 @@ class BaseModel(db.Model):
                 return pagination
             else:
                 return query.all()
-        except DataError as e:
+        except:
             # if isinstance(e.orig, driver_errors.InvalidTextRepresentation):
             #     logger.error("DB_data_error", exc_info=e)
             raise BadRequest(Translator.localize("invalid_filter_input_type"))
@@ -98,7 +104,9 @@ class BaseModel(db.Model):
 
     @classmethod
     def parse_filter(cls, _filter: str) -> str:
-        available_columns = [c_attrs.key for c_attrs in db.inspect(cls).mapper.column_attrs]
+        available_columns = [
+            c_attrs.key for c_attrs in db.inspect(cls).mapper.column_attrs
+        ]
         available_operators = {
             "eq": "=",
             "like": " like ",
@@ -133,17 +141,25 @@ class BaseModel(db.Model):
                 elif match.group(2) == "in":
                     if "null" in value:
                         contains_null = True
-                        value = delimiter.join([val for val in value.split(delimiter) if val != "null"])
-                    if db_type != int or not cls._has_value_correct_type(value, int, is_list=True):
+                        value = delimiter.join(
+                            [val for val in value.split(delimiter) if val != "null"]
+                        )
+                    if db_type != int or not cls._has_value_correct_type(
+                        value, int, is_list=True
+                    ):
                         raise TypeError
-                    value = value if value else "null"  # specialni pripad kdyz filtrujeme pouze null
+                    value = (
+                        value if value else "null"
+                    )  # specialni pripad kdyz filtrujeme pouze null
                     value = f"({value})"
                 else:
                     if not cls._has_value_correct_type(value, db_type):
                         raise TypeError
                     value = f"'{value}'"
             except KeyError:
-                raise BadRequest(Translator.localize("invalid_filter_operator", match.group(2)))
+                raise BadRequest(
+                    Translator.localize("invalid_filter_operator", match.group(2))
+                )
             except ValueError:
                 raise BadRequest(Translator.localize("invalid_filter_datatype"))
             except TypeError:
@@ -162,7 +178,9 @@ class BaseModel(db.Model):
 
     @classmethod
     def parse_sort_query(cls, url_query: str) -> list:
-        available_columns = [c_attrs.key for c_attrs in db.inspect(cls).mapper.column_attrs]
+        available_columns = [
+            c_attrs.key for c_attrs in db.inspect(cls).mapper.column_attrs
+        ]
         query = []
         pattern = r"^(\w+)~(asc|desc)$"
         sort_params = url_query.split("|")
@@ -204,7 +222,7 @@ class BaseModel(db.Model):
 class BaseIdModel(BaseModel):
     __abstract__ = True
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = mapped_column(db.Integer, primary_key=True)
 
     @classmethod
     def base_sort(cls) -> list:

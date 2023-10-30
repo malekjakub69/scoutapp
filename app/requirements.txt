@@ -2,9 +2,12 @@ Flask-RESTful==0.3.9
 Werkzeug==2.2.2
 Flask-SQLAlchemy==3.0.2
 Flask-Migrate==4.0.0
+Flask-JWT-Extended==4.4.4
 flask-marshmallow==0.14.0
 Flask-Authorize==0.2.6
 Flask-Cors==3.0.10
 marshmallow-sqlalchemy==0.28.1
-SQLAlchemy==1.4.40
+SQLAlchemy==2.0.22
 structlog==22.2.0
+pyodbc==4.0.35
+psycopg2==2.9.5

@@ -1,7 +1,5 @@
 from src.models import db
 from src.models.base import BaseIdModel, BaseTimeModel, T
-from src.models.role import Role
-from src.models.user import User
 
 
 class Troop(BaseIdModel, BaseTimeModel):
@@ -9,14 +7,23 @@ class Troop(BaseIdModel, BaseTimeModel):
 
     name = db.Column(db.String(120), nullable=False)
     number = db.Column(db.Integer, nullable=False)
+    code = db.Column(
+        db.Integer,
+        nullable=False,
+        unique=True,
+    )
 
     # self 1:N
     ## Troop hierarchy
-    troop_id = db.Column(db.Integer, db.ForeignKey("troop.id"), nullable=True)
     troop = db.relationship("Troop", remote_side=[id])
+    troop_id = db.Column(db.Integer, db.ForeignKey("troop.id"))
 
     # 1:N
     ## Current troop
-    users: User = db.relationship("User", back_populates="current_troop")
+    users = db.relationship("User", back_populates="current_troop")
     ## Role in troop
-    roles: Role = db.relationship("Role", uselist=False, back_populates="troop")
+    roles = db.relationship("Role", back_populates="troop")
+    ## Register in troop
+    register = db.relationship("Register", back_populates="troop")
+
+    meets = db.relationship("Meet", back_populates="troop")

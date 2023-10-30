@@ -1,0 +1,76 @@
+{
+    "name": "scoutapp-fe",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@headlessui/react": "^1.7.16",
+        "@tanstack/react-query": "^4.32.6",
+        "@tanstack/react-query-devtools": "^4.32.6",
+        "@types/jest": "^27.0.1",
+        "@types/node": "^16.7.13",
+        "@types/react": "^18.0.0",
+        "@types/react-dom": "^18.0.0",
+        "@types/react-table": "^7.7.14",
+        "autoprefixer": "^10.4.14",
+        "clsx": "^2.0.0",
+        "i18next": "^23.4.4",
+        "luxon": "^3.4.0",
+        "postcss": "^8.4.27",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-hook-form": "^7.45.4",
+        "react-hot-toast": "^2.4.1",
+        "react-i18next": "^13.0.3",
+        "react-router-dom": "^6.14.2",
+        "react-table": "^7.8.0",
+        "tailwind-merge": "^1.14.0",
+        "tailwindcss": "^3.3.3",
+        "typescript": "^4.4.2"
+    },
+    "scripts": {
+        "start": "vite --mode dev",
+        "dev:prod": "vite --mode prod",
+        "build:dev": "vite build --mode dev",
+        "build:prod": "vite build --mode prod --base=/ekanban/",
+        "deploy:dev": "aws s3 sync dist/ s3://dev.ekaizen.app",
+        "deploy:prod": "aws s3 sync dist/ s3://prod.ekaizen.app",
+        "invalidate-cache:dev": "aws cloudfront create-invalidation --distribution-id E28DQCVWQG3W7X --paths \"/*\"",
+        "invalidate-cache:prod": "aws cloudfront create-invalidation --distribution-id EDBLDYUER8LE4 --paths \"/*\"",
+        "release:minor": "standard-version --release-as minor",
+        "release:patch": "standard-version --release-as patch",
+        "release:major": "standard-version --release-as major",
+        "format": "prettier --write src/**/*.ts{,x}",
+        "lint": "tsc --noEmit && eslint src/**/*.ts{,x}"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@vitejs/plugin-react": "^4.0.4",
+        "@vitejs/plugin-react-swc": "^3.3.2",
+        "csstype": "^3.1.2",
+        "eslint": "^8.46.0",
+        "eslint-plugin-prettier": "^5.0.0",
+        "eslint-plugin-react": "^7.33.1",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "prettier": "^3.0.1",
+        "vite": "^4.4.9",
+        "vite-plugin-svgr": "^3.2.0",
+        "vite-tsconfig-paths": "^4.2.0"
+    }
+}

@@ -1,14 +1,50 @@
 version: '3'
 services:
-  web:
-    build: ./app  # Místo "image" použijeme "build" pro definici vlastního Dockerfile
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      POSTGRES_PASSWORD: MyV3ryS3cr3t3Passw0rd
+      POSTGRES_DB: ScoutApp
+    networks:
+      - pg-network
+
+  be:
+    image: be-image
+    container_name: be
+    build: ./app 
     volumes:
       - ./app:/app
     ports:
-      - "0.0.0.0:8000:8000"
+      - "8000:8000"
     depends_on:
       - db
-  db:
-    image: postgres
+    networks:
+      - pg-network
+  
+  web:
+    image: web-image
+    container_name: web
+    build: ./web
+    volumes:
+      - ./web:/web
+    ports:
+      - 3000:3000
+    depends_on:
+      - be
+    networks:
+      - pg-network
+
+  db-web:
+    image: dpage/pgadmin4
+    container_name: db-web
     environment:
-      POSTGRES_PASSWORD: example
+      PGADMIN_DEFAULT_EMAIL: malekjakub69@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: Psaaword1
+    ports:
+      - "80:80"
+    networks:
+      - pg-network
+      
+networks:
+  pg-network:

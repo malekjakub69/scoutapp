@@ -1,29 +1,31 @@
-from typing import Type
-
-from flask_restful import request
-from sqlalchemy import or_
 from src.models import db
 from src.models.base import BaseIdModel, BaseTimeModel
-
-from api.app.src.models.user import User
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
+from sqlalchemy import Table, Column, Integer, String, Date
 
 
 class Member(BaseIdModel, BaseTimeModel):
     __tablename__ = "member"
 
-    name = db.Column(db.String(120), nullable=False)
-    nickname = db.Column(db.String(120), nullable=True)
-    surname = db.Column(db.String(120), nullable=False)
-    mobile = db.Column(db.String(120), nullable=True)
-    email = db.Column(db.String(120), nullable=True)
-    address = db.Column(db.String(240), nullable=True)
-    birthDate = db.Column(db.Date, nullable=True)
+    first_name = mapped_column(String(120), nullable=False)
+    nickname = mapped_column(String(120), nullable=True)
+    surname = mapped_column(String(120), nullable=False)
+    mobile = mapped_column(String(120), nullable=True)
+    email = mapped_column(String(120), nullable=True)
+    address = mapped_column(String(120), nullable=True)
+    birth_date = mapped_column(Date(), nullable=True)
 
     # 1:N
+    register = db.relationship("Register", back_populates="member")
 
     # 1:1
-    user_id = db.mapped_column(db.ForeignKey("user.id"))
-    user = db.relationship("User", back_populates="user")
+    user = db.relationship("User", uselist=False, back_populates="member")
+
+    points = db.relationship("Points", back_populates="member")
+
+    check_meets = db.relationship("CheckMember", back_populates="member")
 
     @classmethod
     def get_role_id(cls, code: str) -> int:
