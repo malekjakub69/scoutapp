@@ -11,4 +11,4 @@ def init_db():
     from src.models.points import Points
     from src.models.meet import Meet
     from src.models.register import Register
-    from src.models.checkMember import CheckMember
+    from src.models.check_member import CheckMember

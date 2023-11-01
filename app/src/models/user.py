@@ -1,39 +1,30 @@
-from typing import Type
-
-from flask_restful import request
-from sqlalchemy import or_
-from src.models import db
-from src.models.base import BaseIdModel, BaseTimeModel, T
+from src.models.base import BaseIdModel, BaseTimeModel
+from sqlalchemy.orm import Mapped
+from typing import List
+from datetime import datetime
 from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
+from sqlalchemy import ForeignKey, String, DateTime, Integer
 
 
 class User(BaseIdModel, BaseTimeModel):
     __tablename__ = "user"
 
-    email = mapped_column(db.String(120), unique=True, nullable=False)
-    login = db.Column(db.String(120), unique=True, nullable=True)
-    password = db.Column(db.String(120), nullable=False)
-    first_name = db.Column(db.String(100), nullable=False)
-    surname = db.Column(db.String(100), nullable=False)
-    last_login = db.Column(db.DateTime, nullable=True)
+    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    login: Mapped[str] = mapped_column(String(120), unique=True, nullable=True)
+    password: Mapped[str] = mapped_column(String(240), nullable=False)
+    first_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    surname: Mapped[str] = mapped_column(String(120), nullable=False)
+    last_login: Mapped[datetime] = mapped_column(DateTime(), nullable=True)
 
     # 1:N
     ## Have role
-    roles = db.relationship("Role", back_populates="user")
+    roles: Mapped[List["Role"]] = relationship(back_populates="user")
 
     ## Current troop
-    current_troop = db.relationship("Troop", back_populates="users", uselist=False)
+    current_troop: Mapped["Troop"] = relationship(back_populates="users", uselist=False)
+    current_troop_id: Mapped[int] = mapped_column(Integer(), ForeignKey("troop.id"))
 
     # 1:1
-    member_id = db.Column(db.Integer, db.ForeignKey("member.id"))
-    member = db.relationship("Member", back_populates="user")
-
-    @classmethod
-    def get_by_email_or_login(cls: Type[T], id_string: str, set_language=True) -> T:
-        id_string = id_string.lower()
-        user = cls.query.filter(
-            or_(User.email == id_string, User.login == id_string)
-        ).first()
-        if set_language and user:
-            request.__setattr__("language", user.resolve_language())
-        return user
+    member: Mapped["Member"] = relationship(back_populates="user")
+    member_id: Mapped[int] = mapped_column(Integer(), ForeignKey("member.id"))
