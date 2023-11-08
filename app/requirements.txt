@@ -11,3 +11,5 @@ SQLAlchemy==2.0.22
 structlog==22.2.0
 pyodbc==4.0.35
 psycopg2==2.9.5
+albemic==1.12.1
+

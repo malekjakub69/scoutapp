@@ -5,7 +5,6 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy import Integer, DateTime
 
 from sqlalchemy.orm import DeclarativeBase
-from src.models import db
 from sqlalchemy.orm import mapped_column
 
 T = TypeVar("T", bound="BaseModel")

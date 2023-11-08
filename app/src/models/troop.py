@@ -1,4 +1,7 @@
-from src.models import db
+from src.models.meet import Meet
+from src.models.register import Register
+from src.models.role import Role
+from src.models.user import User
 from src.models.base import BaseIdModel, BaseTimeModel
 from sqlalchemy.orm import Mapped
 from typing import List
@@ -12,7 +15,7 @@ class Troop(BaseIdModel, BaseTimeModel):
 
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     number: Mapped[int] = mapped_column(Integer(), nullable=False)
-    code: Mapped[int] = db.Column(String(16), nullable=False, unique=True)
+    code: Mapped[int] = mapped_column(String(16), nullable=False, unique=True)
 
     # self 1:N
     ## Troop hierarchy

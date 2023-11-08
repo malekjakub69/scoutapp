@@ -1,4 +1,5 @@
-from src.models import db
+from src.models.check_member import CheckMember
+from src.models.points import Points
 from src.models.base import BaseIdModel, BaseTimeModel, T
 from typing import List
 import datetime

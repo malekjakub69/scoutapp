@@ -1,4 +1,3 @@
-from src.models import db
 from src.models.base import BaseIdModel, BaseTimeModel, T
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped

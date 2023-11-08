@@ -1,3 +1,4 @@
+from src.models.role import Role
 from src.models.base import BaseIdModel, BaseTimeModel
 from sqlalchemy.orm import Mapped
 from typing import List

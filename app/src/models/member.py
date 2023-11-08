@@ -1,4 +1,6 @@
-from src.models import db
+from src.models.check_member import CheckMember
+from src.models.points import Points
+from src.models.register import Register
 from src.models.base import BaseIdModel, BaseTimeModel
 from sqlalchemy.orm import Mapped
 from sqlalchemy import String, Date
