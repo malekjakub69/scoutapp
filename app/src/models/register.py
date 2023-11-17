@@ -1,15 +1,22 @@
+from src.models import db
 from src.models.base import BaseIdModel, BaseTimeModel
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-from sqlalchemy import ForeignKey, Integer
 
 
 class Register(BaseIdModel, BaseTimeModel):
+    """
+    Represents a registration of a member to a troop.
+
+    Attributes:
+        member_id (int): The ID of the member being registered.
+        member (Member): The member being registered.
+        troop_id (int): The ID of the troop the member is being registered to.
+        troop (Troop): The troop the member is being registered to.
+    """
+
     __tablename__ = "register"
 
-    member: Mapped["Member"] = relationship(back_populates="register")
-    member_id: Mapped[int] = mapped_column(Integer(), ForeignKey("member.id"))
+    member_id = db.Column(db.Integer, db.ForeignKey("member.id"), nullable=False)
+    member = db.relationship("Member", back_populates="register")
 
-    troop: Mapped["Troop"] = relationship(back_populates="register")
-    troop_id: Mapped[int] = mapped_column(Integer(), ForeignKey("troop.id"))
+    troop_id = db.Column(db.Integer, db.ForeignKey("troop.id"), nullable=False)
+    troop = db.relationship("Troop", back_populates="register")

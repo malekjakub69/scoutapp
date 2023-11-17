@@ -1,31 +1,40 @@
-from src.models.role import Role
+from src.models import db
 from src.models.base import BaseIdModel, BaseTimeModel
-from sqlalchemy.orm import Mapped
-from typing import List
-from datetime import datetime
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-from sqlalchemy import ForeignKey, String, DateTime, Integer
 
 
 class User(BaseIdModel, BaseTimeModel):
+    """
+    Represents a user in the system.
+
+    Attributes:
+        email (str): The user's email address.
+        login (str): The user's login name.
+        password (str): The user's password.
+        first_name (str): The user's first name.
+        surname (str): The user's surname.
+        last_login (datetime): The date and time of the user's last login.
+        roles (List[Role]): The roles assigned to the user.
+        current_troop (Troop): The user's current troop.
+        member (Member): The member associated with the user.
+    """
+
     __tablename__ = "user"
 
-    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    login: Mapped[str] = mapped_column(String(120), unique=True, nullable=True)
-    password: Mapped[str] = mapped_column(String(240), nullable=False)
-    first_name: Mapped[str] = mapped_column(String(120), nullable=False)
-    surname: Mapped[str] = mapped_column(String(120), nullable=False)
-    last_login: Mapped[datetime] = mapped_column(DateTime(), nullable=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    login = db.Column(db.String(120), unique=True, nullable=True)
+    password = db.Column(db.String(240), nullable=False)
+    first_name = db.Column(db.String(120), nullable=False)
+    surname = db.Column(db.String(120), nullable=False)
+    last_login = db.Column(db.DateTime(), nullable=True)
 
     # 1:N
     ## Have role
-    roles: Mapped[List["Role"]] = relationship(back_populates="user")
+    permissions = db.relationship("Permission", back_populates="user")
 
     ## Current troop
-    current_troop: Mapped["Troop"] = relationship(back_populates="users", uselist=False)
-    current_troop_id: Mapped[int] = mapped_column(Integer(), ForeignKey("troop.id"))
+    current_troop = db.relationship("Troop", back_populates="users", uselist=False)
+    current_troop_id = db.Column(db.Integer, db.ForeignKey("troop.id"), nullable=True)
 
     # 1:1
-    member: Mapped["Member"] = relationship(back_populates="user")
-    member_id: Mapped[int] = mapped_column(Integer(), ForeignKey("member.id"))
+    member = db.relationship("Member", back_populates="user", uselist=False)
+    member_id = db.Column(db.Integer, db.ForeignKey("member.id"), nullable=True)

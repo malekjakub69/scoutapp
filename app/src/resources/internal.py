@@ -1,7 +1,7 @@
+import json
 from flask_restful import Resource
 
-from src.models.user import User
-from sqlalchemy import select
+from src.models.troop import Troop
 
 
 class HealthCheckResource(Resource):
@@ -10,14 +10,23 @@ class HealthCheckResource(Resource):
 
 
 class HealthCheckDatabaseResource(Resource):
+    """
+    Resource for checking the health of the database.
+    Attempts to create a new role, retrieve it, and delete it.
+    Returns a success message if the database is working properly.
+    """
+
     def get(self):
         try:
-            # to check database we will execute raw query
+            new_troop = Troop(name="test", number=1, code="001.11")
+            new_troop.save()
 
-            users = select(User)
-            print(users)
+            role = Troop.query.filter_by(code="test").first()
+
+            role.delete()
+
         except Exception as e:
             output = str(e)
             return output, 400
 
-        return users, 200
+        return json.dumps("Db works"), 200
