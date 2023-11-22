@@ -1,8 +1,14 @@
+import re
+from typing import Type
 from src.models import db
-from src.models.base import BaseIdModel, BaseTimeModel
+from src.models.base import BaseIdModel, T
+from werkzeug.exceptions import BadRequest
+from sqlalchemy import or_
+from werkzeug.security import check_password_hash, generate_password_hash
+from src.translations.translator import Translator
 
 
-class User(BaseIdModel, BaseTimeModel):
+class User(BaseIdModel):
     """
     Represents a user in the system.
 
@@ -23,18 +29,43 @@ class User(BaseIdModel, BaseTimeModel):
     email = db.Column(db.String(120), unique=True, nullable=False)
     login = db.Column(db.String(120), unique=True, nullable=True)
     password = db.Column(db.String(240), nullable=False)
-    first_name = db.Column(db.String(120), nullable=False)
-    surname = db.Column(db.String(120), nullable=False)
-    last_login = db.Column(db.DateTime(), nullable=True)
+    first_name = db.Column(db.String(120), nullable=True)
+    surname = db.Column(db.String(120), nullable=True)
+    last_login = db.Column(db.DateTime, nullable=True)
+    registration_date = db.Column(db.DateTime, default=db.func.now())
 
     # 1:N
     ## Have role
     permissions = db.relationship("Permission", back_populates="user")
 
     ## Current troop
-    current_troop = db.relationship("Troop", back_populates="users", uselist=False)
     current_troop_id = db.Column(db.Integer, db.ForeignKey("troop.id"), nullable=True)
+    current_troop = db.relationship("Troop", back_populates="users", uselist=False)
 
     # 1:1
-    member = db.relationship("Member", back_populates="user", uselist=False)
     member_id = db.Column(db.Integer, db.ForeignKey("member.id"), nullable=True)
+    member = db.relationship("Member", back_populates="user", uselist=False)
+
+    @classmethod
+    def verify_password(cls, original_hash: str, password: str) -> bool:
+        return check_password_hash(original_hash, password)
+
+    @classmethod
+    def get_by_email_or_login(cls: Type[T], id_string: str) -> T:
+        id_string = id_string.lower()
+        user = cls.query.filter(or_(User.email == id_string, User.login == id_string)).first()
+        return user
+
+    @classmethod
+    def hash_password(cls, password: str) -> str:
+        cls._validate_password(password)
+        return generate_password_hash(password)
+
+    @classmethod
+    def _validate_password(cls, value: str) -> None:
+        if len(value) < 8:
+            raise BadRequest(Translator.localize("short_password"))
+        elif re.search(r"[0-9]", value) is None:
+            raise BadRequest(Translator.localize("number_not_in_password"))
+        elif re.search(r"[A-Z]", value) is None:
+            raise BadRequest(Translator.localize("capital_not_in_password"))

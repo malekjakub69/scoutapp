@@ -1,8 +1,8 @@
 from src.models import db
-from src.models.base import BaseTimeModel, BaseIdModel
+from src.models.base import BaseIdModel
 
 
-class Meet(BaseIdModel, BaseTimeModel):
+class Meet(BaseIdModel):
     """
     Represents a meeting of a scout troop.
 

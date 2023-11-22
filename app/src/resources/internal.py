@@ -18,10 +18,12 @@ class HealthCheckDatabaseResource(Resource):
 
     def get(self):
         try:
-            new_troop = Troop(name="test", number=1, code="001.11")
-            new_troop.save()
+            role = Troop.query.filter_by(code="001.11").first()
+            if role == None:
+                new_troop = Troop(name="test", number=1, code="001.11")
+                new_troop.save()
 
-            role = Troop.query.filter_by(code="test").first()
+            role = Troop.query.filter_by(code="001.11").first()
 
             role.delete()
 

@@ -1,8 +1,8 @@
 from src.models import db
-from src.models.base import BaseIdModel, BaseTimeModel
+from src.models.base import BaseIdModel
 
 
-class Points(BaseIdModel, BaseTimeModel):
+class Points(BaseIdModel):
     """
     Represents the points earned by a member in a meet.
 

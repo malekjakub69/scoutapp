@@ -1,8 +1,8 @@
 from src.models import db
-from src.models.base import BaseIdModel, BaseTimeModel
+from src.models.base import BaseIdModel
 
 
-class Register(BaseIdModel, BaseTimeModel):
+class Register(BaseIdModel):
     """
     Represents a registration of a member to a troop.
 

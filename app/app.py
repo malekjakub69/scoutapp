@@ -55,6 +55,10 @@ def create_app():
     _ = CORS(app)
     _ = Marshmallow(app)
 
+    from src.authorization import jwt
+
+    jwt.init_app(app)
+
     from src.resources import register_resources
 
     register_resources(api, "/v1")

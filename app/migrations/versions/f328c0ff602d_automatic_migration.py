@@ -1,8 +1,8 @@
 """automatic migration
 
-Revision ID: 18d4e52f8495
+Revision ID: f328c0ff602d
 Revises: 
-Create Date: 2023-11-15 12:31:49.781200
+Create Date: 2023-11-21 16:04:58.519314
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '18d4e52f8495'
+revision = 'f328c0ff602d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,7 +26,8 @@ def upgrade():
     sa.Column('email', sa.String(length=120), nullable=True),
     sa.Column('address', sa.String(length=120), nullable=True),
     sa.Column('birth_date', sa.Date(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False, implicit_returning=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('created_on', sa.DateTime(), nullable=True),
     sa.Column('updated_on', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
@@ -34,7 +35,8 @@ def upgrade():
     op.create_table('role',
     sa.Column('name', sa.String(length=120), nullable=False),
     sa.Column('code', sa.String(length=120), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False, implicit_returning=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('created_on', sa.DateTime(), nullable=True),
     sa.Column('updated_on', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
@@ -45,7 +47,8 @@ def upgrade():
     sa.Column('number', sa.Integer(), nullable=False),
     sa.Column('code', sa.String(length=16), nullable=False),
     sa.Column('parent_troop_id', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False, implicit_returning=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('created_on', sa.DateTime(), nullable=True),
     sa.Column('updated_on', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['parent_troop_id'], ['troop.id'], ),
@@ -56,17 +59,19 @@ def upgrade():
     sa.Column('date', sa.Date(), nullable=False),
     sa.Column('type', sa.String(length=60), nullable=False),
     sa.Column('photograpy_url', sa.String(length=240), nullable=True),
-    sa.Column('troop_id', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('troop_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False, implicit_returning=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('created_on', sa.DateTime(), nullable=True),
     sa.Column('updated_on', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['troop_id'], ['troop.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('register',
-    sa.Column('member_id', sa.Integer(), nullable=True),
-    sa.Column('troop_id', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('member_id', sa.Integer(), nullable=False),
+    sa.Column('troop_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False, implicit_returning=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('created_on', sa.DateTime(), nullable=True),
     sa.Column('updated_on', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['member_id'], ['member.id'], ),
@@ -77,12 +82,14 @@ def upgrade():
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('login', sa.String(length=120), nullable=True),
     sa.Column('password', sa.String(length=240), nullable=False),
-    sa.Column('first_name', sa.String(length=120), nullable=False),
-    sa.Column('surname', sa.String(length=120), nullable=False),
+    sa.Column('first_name', sa.String(length=120), nullable=True),
+    sa.Column('surname', sa.String(length=120), nullable=True),
     sa.Column('last_login', sa.DateTime(), nullable=True),
+    sa.Column('registration_date', sa.DateTime(), nullable=True),
     sa.Column('current_troop_id', sa.Integer(), nullable=True),
     sa.Column('member_id', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False, implicit_returning=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('created_on', sa.DateTime(), nullable=True),
     sa.Column('updated_on', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['current_troop_id'], ['troop.id'], ),
@@ -93,22 +100,39 @@ def upgrade():
     )
     op.create_table('check_member',
     sa.Column('member_name', sa.String(), nullable=False),
+    sa.Column('member_hash', sa.String(length=32), nullable=False),
     sa.Column('other_desc', sa.String(), nullable=True),
     sa.Column('confirm', sa.Boolean(), nullable=False),
+    sa.Column('no_reason', sa.String(length=1024), nullable=True),
     sa.Column('member_id', sa.Integer(), nullable=True),
-    sa.Column('meet_id', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('meet_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False, implicit_returning=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('created_on', sa.DateTime(), nullable=True),
     sa.Column('updated_on', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['meet_id'], ['meet.id'], ),
     sa.ForeignKeyConstraint(['member_id'], ['member.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('permission',
+    sa.Column('role_id', sa.Integer(), nullable=False),
+    sa.Column('troop_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False, implicit_returning=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
+    sa.Column('created_on', sa.DateTime(), nullable=True),
+    sa.Column('updated_on', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['role_id'], ['role.id'], ),
+    sa.ForeignKeyConstraint(['troop_id'], ['troop.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('points',
     sa.Column('point', sa.Integer(), nullable=True),
-    sa.Column('member_id', sa.Integer(), nullable=True),
-    sa.Column('meet_id', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('member_id', sa.Integer(), nullable=False),
+    sa.Column('meet_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False, implicit_returning=False),
+    sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('created_on', sa.DateTime(), nullable=True),
     sa.Column('updated_on', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['meet_id'], ['meet.id'], ),
@@ -121,6 +145,7 @@ def upgrade():
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('points')
+    op.drop_table('permission')
     op.drop_table('check_member')
     op.drop_table('user')
     op.drop_table('register')

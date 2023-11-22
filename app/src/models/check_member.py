@@ -1,8 +1,8 @@
 from src.models import db
-from src.models.base import BaseTimeModel, BaseIdModel
+from src.models.base import BaseIdModel
 
 
-class CheckMember(BaseIdModel, BaseTimeModel):
+class CheckMember(BaseIdModel):
     """
     Represents a check-in record for a member at a meet.
 
@@ -14,13 +14,17 @@ class CheckMember(BaseIdModel, BaseTimeModel):
         member (Member): The associated member object.
         meet_id (int): The foreign key for the associated meet.
         meet (Meet): The associated meet object.
+        no_reason (str): The reason for not checking in.
+        member_hash (str): The hash of the member's name.
     """
 
     __tablename__ = "check_member"
 
     member_name = db.Column(db.String, nullable=False)
+    member_hash = db.Column(db.String(32), nullable=False)
     other_desc = db.Column(db.String, nullable=True)
     confirm = db.Column(db.Boolean, nullable=False)
+    no_reason = db.Column(db.String(1024), nullable=True)
 
     member_id = db.Column(db.Integer, db.ForeignKey("member.id"), nullable=True)
     member = db.relationship("Member", back_populates="check_members")

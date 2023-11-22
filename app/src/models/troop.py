@@ -1,8 +1,8 @@
 from src.models import db
-from src.models.base import BaseIdModel, BaseTimeModel
+from src.models.base import BaseIdModel
 
 
-class Troop(BaseIdModel, BaseTimeModel):
+class Troop(BaseIdModel):
     """
     Represents a troop in the ScoutApp system.
 
@@ -11,6 +11,7 @@ class Troop(BaseIdModel, BaseTimeModel):
         number (int): The number of the troop.
         code (str): The unique code of the troop.
         troops (list[Troop]): The child troops of this troop.
+        parent_troop (Troop): The parent troop of this troop.
         parent_troop_id (int): The ID of the parent troop, if any.
         users (list[User]): The users currently assigned to this troop.
         roles (list[Role]): The roles assigned to this troop.
@@ -26,8 +27,9 @@ class Troop(BaseIdModel, BaseTimeModel):
 
     # self 1:N
     ## Troop hierarchy
-    troops = db.relationship("Troop")
     parent_troop_id = db.Column(db.Integer(), db.ForeignKey("troop.id"), nullable=True)
+    parent_troop = db.relationship("Troop", back_populates="troops", uselist=False, remote_side="Troop.id")
+    troops = db.relationship("Troop", back_populates="parent_troop")
 
     # 1:N
     ## Current troop

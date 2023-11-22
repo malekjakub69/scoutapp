@@ -1,8 +1,8 @@
 from src.models import db
-from src.models.base import BaseIdModel, BaseTimeModel
+from src.models.base import BaseIdModel
 
 
-class Role(BaseIdModel, BaseTimeModel):
+class Role(BaseIdModel):
     """
     Represents a role that a user can have in the system, such as a troop leader or administrator.
 

@@ -1,8 +1,8 @@
 from src.models import db
-from src.models.base import BaseTimeModel, BaseIdModel
+from src.models.base import BaseIdModel
 
 
-class Member(BaseIdModel, BaseTimeModel):
+class Member(BaseIdModel):
     """
     Represents a member of the organization.
 
