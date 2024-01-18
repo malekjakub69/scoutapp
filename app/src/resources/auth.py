@@ -1,17 +1,12 @@
 import datetime
 from flask_restful import Resource, request
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    get_jwt,
-    get_jwt_identity,
-    jwt_required,
-)
-from logger import logger
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
+from src.models.revoked_tokens import RevokedToken
 from src.translations.translator import Translator
 from src.models.user import User
 from src.schemas import deserialize, serialize
-from werkzeug.exceptions import BadRequest, Conflict, Forbidden, NotFound, Unauthorized
+from werkzeug.exceptions import BadRequest, Conflict, Unauthorized
+from src.authorization import jwt
 
 
 class LoginResource(Resource):
@@ -50,7 +45,6 @@ class RegistrationResource(Resource):
         data = deserialize("RegistrationSchema", request.get_json(), partial=True)
         user = User.get_by_email_or_login(data["email"])
         if user:
-            logger.warning(f"User {data['email']} has already been registered.", email=user.email)
             raise Conflict(Translator.localize("user_already_registered", user.email))
         if not data["email"]:
             raise BadRequest(Translator.localize("email_required"))
@@ -78,3 +72,37 @@ class RegistrationResource(Resource):
             },
             201,
         )
+
+
+class Authenticate(Resource):
+    @jwt_required()
+    def post(self):
+        # Returns current user if token is valid. Otherwise a client error is returned.
+        current_user = User.get_by_email_or_login(get_jwt_identity())
+        if current_user:
+            return serialize("UserSchemaExtended", current_user)
+        raise Unauthorized(Translator.localize("entity_not_found", Translator.localize("user")))
+
+
+class UserLogoutAccess(Resource):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()["jti"]
+        revoked_token = RevokedToken(jti=jti)
+        revoked_token.save()
+        return {"message": "Access token has been revoked"}
+
+
+class UserLogoutRefresh(Resource):
+    @jwt_required(refresh=True)
+    def post(self):
+        jti = get_jwt()["jti"]
+        revoked_token = RevokedToken(jti=jti)
+        revoked_token.save()
+        return {"message": "Refresh token has been revoked"}
+
+
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blocklist(jwt_header, jwt_payload):
+    jti = jwt_payload["jti"]
+    return RevokedToken.is_jti_blocklisted(jti)

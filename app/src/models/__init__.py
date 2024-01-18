@@ -14,3 +14,4 @@ def init_db():
     from src.models.register import Register
     from src.models.check_member import CheckMember
     from src.models.permission import Permission
+    from src.models.revoked_tokens import RevokedToken

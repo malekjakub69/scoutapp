@@ -20,14 +20,18 @@ class CheckMember(BaseIdModel):
 
     __tablename__ = "check_member"
 
-    member_name = db.Column(db.String, nullable=False)
-    member_hash = db.Column(db.String(32), nullable=False)
+    member_hash = db.Column(db.String(32), unique=True, nullable=False)
     other_desc = db.Column(db.String, nullable=True)
     confirm = db.Column(db.Boolean, nullable=False)
     no_reason = db.Column(db.String(1024), nullable=True)
+    sent = db.Column(db.Boolean, nullable=False, default=False)
 
     member_id = db.Column(db.Integer, db.ForeignKey("member.id"), nullable=True)
     member = db.relationship("Member", back_populates="check_members")
 
     meet_id = db.Column(db.Integer, db.ForeignKey("meet.id"), nullable=False)
     meet = db.relationship("Meet", back_populates="check_members")
+
+    @classmethod
+    def get_by_member_hash(cls, member_hash: str):
+        return cls.query.filter_by(member_hash=member_hash).first()

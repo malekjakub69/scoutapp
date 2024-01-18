@@ -6,17 +6,11 @@ from flask_migrate import Migrate, upgrade, init, migrate
 
 from flask_restful import Api
 
-from middleware import after_request, before_request
-
-from logger import logger
-
 
 env_to_config_file = {"dev": "dev_config.cfg", "prod": "prod_config.cfg"}
 
 
 def create_app():
-    # configure logger
-    logger.configure("scout_app")
     # create application
     app = Flask(__name__, template_folder=os.path.join("src", "templates"))
     config_file = env_to_config_file.get(os.environ.get("CONFIGURATION", "dev"))
@@ -30,10 +24,6 @@ def create_app():
 
     db.init_app(app)
     init_db()
-
-    # set callback before and after request
-    app.before_request(before_request)
-    app.after_request(after_request)
 
     def handle_migrations():
         with app.app_context():
@@ -49,7 +39,7 @@ def create_app():
                 upgrade()
 
     _ = Migrate(app, db)
-    handle_migrations()
+    # handle_migrations()
 
     # init other extensions
     _ = CORS(app)

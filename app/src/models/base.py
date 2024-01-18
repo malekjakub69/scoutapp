@@ -3,7 +3,6 @@ import sqlalchemy
 from werkzeug.exceptions import BadRequest, InternalServerError
 from src.translations.translator import Translator
 
-from logger import logger
 from src.models import db
 
 T = TypeVar("T", bound="BaseModel")
@@ -31,10 +30,8 @@ class BaseModel(db.Model):
             if e.orig.args[0] == "23000":
                 raise BadRequest(Translator.localize("db_key_exists"))
             db.session.rollback()
-            logger.bind(exc_info=e)
             raise InternalServerError()
         except Exception as e:
-            logger.bind(exc_info=e)
             db.session.rollback()
             raise InternalServerError("DB error")
 
@@ -49,7 +46,6 @@ class BaseModel(db.Model):
             db.session.delete(self)
             db.session.commit()
         except Exception as e:
-            logger.bind(exc_info=e)
             raise InternalServerError(str(e))
 
     @classmethod
@@ -72,7 +68,7 @@ class BaseIdModel(BaseModel):
 
     __abstract__ = True
 
-    id = db.Column(db.Integer, primary_key=True, implicit_returning=False)
+    id = db.Column(db.Integer, primary_key=True)
     active = db.Column(db.Boolean, default=True)
     created_on = db.Column(db.DateTime, default=db.func.now())
     updated_on = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
@@ -106,7 +102,6 @@ class Transaction:
     def flush_bulk(self):
         if self.items_count >= self.bulk_size:
             self.commit()
-            # logger.info(f"Flushing bulk of size {self.items_count}")
             self.items_count = 0
 
     def add(self, *entities):
@@ -134,10 +129,8 @@ class Transaction:
         except sqlalchemy.exc.DBAPIError as e:
             if e.orig.args[0] == "23000":
                 raise BadRequest(Translator.localize("db_key_exists"))
-            logger.bind(exc_info=e)
             raise InternalServerError()
         except Exception as e:
-            logger.bind(exc_info=e)
             raise InternalServerError("DB error")
         finally:
             self.session.rollback()

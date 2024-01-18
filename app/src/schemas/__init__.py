@@ -1,7 +1,6 @@
 import pkgutil
 from marshmallow import ValidationError
 from werkzeug.exceptions import BadRequest
-from logger import logger
 
 
 for importer, modname, ispkg in pkgutil.walk_packages(__path__, __name__ + "."):
@@ -32,5 +31,4 @@ def deserialize(schema: str, data: dict, **kwargs) -> dict:
         klass = globals()[schema]
         return klass(**kwargs).load(data)
     except ValidationError as e:
-        logger.bind(exc_info=e)
         raise BadRequest(e.normalized_messages())

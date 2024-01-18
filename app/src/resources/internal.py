@@ -1,4 +1,3 @@
-import json
 from flask_restful import Resource
 
 from src.models.troop import Troop
@@ -6,7 +5,7 @@ from src.models.troop import Troop
 
 class HealthCheckResource(Resource):
     def get(self):
-        return "ok", 200
+        return {"message": "ok"}, 200
 
 
 class HealthCheckDatabaseResource(Resource):
@@ -31,4 +30,4 @@ class HealthCheckDatabaseResource(Resource):
             output = str(e)
             return output, 400
 
-        return json.dumps("Db works"), 200
+        return {"message": "Db works"}, 200
