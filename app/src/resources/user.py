@@ -7,7 +7,7 @@ from src.models.user import User
 from src.schemas import deserialize, serialize
 from src.translations.translator import Translator
 from flask_restful import request
-from werkzeug.exceptions import NotFound, BadRequest, Conflict
+from werkzeug.exceptions import NotFound, BadRequest, Conflict, Unauthorized
 from src.authorization.decorators import authorize_roles, authorize_all
 
 
@@ -23,6 +23,13 @@ class IdentityResource(BaseResource):
     def get(self):
         user = User.get_by_email_or_login(get_jwt_identity())
         return self.result(serialize("UserSchema", user))
+
+
+class UserSelfResource(BaseResource):
+    @jwt_required()
+    def get(self):
+        user = User.get_by_email_or_login(get_jwt_identity())
+        return self.resultSingle(serialize("UserSchema", user))
 
 
 class UserResource(BaseResource):

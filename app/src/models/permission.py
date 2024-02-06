@@ -28,5 +28,9 @@ class Permission(BaseIdModel):
     user = db.relationship("User", back_populates="permissions", uselist=False)
 
     @classmethod
-    def get_item(cls, _user_id, _troop_id, _role_id):
-        return cls.query.filter_by(user_id=_user_id, troop_id=_troop_id, role_id=_role_id).first()
+    def get_item(cls, _user_id, _troop_id):
+        return cls.query.filter_by(user_id=_user_id, troop_id=_troop_id).first()
+
+    @classmethod
+    def get_item_by_user_id(self, _user_id):
+        return self.query.filter_by(user_id=_user_id).all()

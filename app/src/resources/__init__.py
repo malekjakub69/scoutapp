@@ -15,12 +15,16 @@ def register_resources(api, v):
     # Internal
     api.add_resource(HealthCheckResource, f"{v}/healthcheck")  # GET
     api.add_resource(HealthCheckDatabaseResource, f"{v}/healthcheck_db")  # GET
+    api.add_resource(InitDb, f"{v}/init_db")  # GET
     # Auth
     api.add_resource(LoginResource, f"{v}/login")  # POST
     api.add_resource(RegistrationResource, f"{v}/registration")  # POST
+    api.add_resource(UserLogoutAccess, f"{v}/logout/access")  # POST
+    api.add_resource(UserLogoutRefresh, f"{v}/logout/refresh")  # POST
     # User
     api.add_resource(UsersResource, f"{v}/users")  # GET all
-    api.add_resource(UserResource, f"{v}/user" f"{v}/user/<int:user_id>")  # GET single, POST, DELETE
+    api.add_resource(UserSelfResource, f"{v}/user")  # GET single
+    api.add_resource(UserResource, f"{v}/user/<int:user_id>")  # GET single, POST, DELETE
     api.add_resource(UserChangeTroop, f"{v}/change_troop")  # POST
     # Troop
     api.add_resource(TroopsResource, f"{v}/troops")  # GET all

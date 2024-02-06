@@ -122,6 +122,16 @@ class Transaction:
             self.items_count += 1
         self.flush_bulk()
 
+    def clear_db(self):
+        db.drop_all()
+        self.items_count += 1
+        self.flush_bulk()
+
+    def create_db(self):
+        db.create_all()
+        self.items_count += 1
+        self.flush_bulk()
+
     def commit(self):
         try:
             self.session.commit()

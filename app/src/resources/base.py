@@ -16,6 +16,17 @@ class BaseResource(Resource):
         result["message"] = message
         return result
 
+    def resultSingle(self, data, message=None) -> dict:
+        if data and "item" in data[0]:
+            data = data.pop(0)
+            result = {}
+            for key, value in data.items():
+                result[key] = value
+        else:
+            result = {"item": data}
+        result["message"] = message
+        return result
+
     @property
     def current_user(self) -> Optional[User]:
         return getattr(request, "current_user", None)

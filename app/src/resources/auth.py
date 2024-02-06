@@ -20,7 +20,7 @@ class LoginResource(Resource):
         current_user = User.get_by_email_or_login(data["login"])
 
         if not current_user:
-            raise Unauthorized(Translator.localize("wrong_credentials"))
+            raise Unauthorized(Translator.localize("wrong_username"))
         if not current_user.active:
             return {"message": Translator.localize("user_not_active")}, 202
         if User.verify_password(current_user.password, data["password"]):
@@ -31,19 +31,22 @@ class LoginResource(Resource):
             current_user.save()
 
             return {
-                "items": serialize("UserSchema", current_user),
-                "message": f"Logged in as {current_user.first_name} {current_user.surname}",
+                "item": serialize("UserSchema", current_user),
+                "message": f"Logged in as {current_user.first_name} {current_user.last_name}",
                 "access_token": access_token,
                 "refresh_token": refresh_token,
             }
         else:
-            return {"message": Translator.localize("wrong_credentials")}, 401
+            raise Unauthorized(Translator.localize("wrong_password"))
 
 
 class RegistrationResource(Resource):
     def post(self):
         data = deserialize("RegistrationSchema", request.get_json(), partial=True)
         user = User.get_by_email_or_login(data["email"])
+        if user:
+            raise Conflict(Translator.localize("user_already_registered", user.email))
+        user = User.get_by_email_or_login(data["login"])
         if user:
             raise Conflict(Translator.localize("user_already_registered", user.email))
         if not data["email"]:
@@ -66,7 +69,7 @@ class RegistrationResource(Resource):
 
         return (
             {
-                "message": Translator.localize("user_registered", f"{user.first_name} {user.surname}"),
+                "message": Translator.localize("user_registered", f"{user.first_name} {user.last_name}"),
                 "access_token": access_token,
                 "refresh_token": refresh_token,
             },

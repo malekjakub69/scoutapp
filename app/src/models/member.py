@@ -9,7 +9,7 @@ class Member(BaseIdModel):
     Attributes:
         first_name (str): The first name of the member.
         nickname (str): The nickname of the member.
-        surname (str): The surname of the member.
+        last_name (str): The last name of the member.
         mobile (str): The mobile phone number of the member.
         email (str): The email address of the member.
         address (str): The address of the member.
@@ -24,7 +24,7 @@ class Member(BaseIdModel):
 
     first_name = db.Column(db.String(120), nullable=False)
     nickname = db.Column(db.String(120), nullable=True)
-    surname = db.Column(db.String(120), nullable=False)
+    last_name = db.Column(db.String(120), nullable=False)
     mobile = db.Column(db.String(120), nullable=True)
     email = db.Column(db.String(120), nullable=True)
     address = db.Column(db.String(120), nullable=True)

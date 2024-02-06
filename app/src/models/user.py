@@ -17,7 +17,7 @@ class User(BaseIdModel):
         login (str): The user's login name.
         password (str): The user's password.
         first_name (str): The user's first name.
-        surname (str): The user's surname.
+        last_name (str): The user's last name.
         last_login (datetime): The date and time of the user's last login.
         roles (List[Role]): The roles assigned to the user.
         current_troop (Troop): The user's current troop.
@@ -30,7 +30,7 @@ class User(BaseIdModel):
     login = db.Column(db.String(120), unique=True, nullable=True)
     password = db.Column(db.String(240), nullable=False)
     first_name = db.Column(db.String(120), nullable=True)
-    surname = db.Column(db.String(120), nullable=True)
+    last_name = db.Column(db.String(120), nullable=True)
     last_login = db.Column(db.DateTime, nullable=True)
     registration_date = db.Column(db.DateTime, default=db.func.now())
 

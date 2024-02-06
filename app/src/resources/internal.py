@@ -1,4 +1,8 @@
 from flask_restful import Resource
+from src.models.base import Transaction
+from src.models.permission import Permission
+from src.models.role import Role
+from src.models.user import User
 
 from src.models.troop import Troop
 
@@ -31,3 +35,24 @@ class HealthCheckDatabaseResource(Resource):
             return output, 400
 
         return {"message": "Db works"}, 200
+
+
+class InitDb(Resource):
+    def get(self):
+        transaction = Transaction()
+        transaction.clear_db()
+        transaction.commit()
+
+        transaction.create_db()
+        transaction.commit()
+
+        user = User(email="admin@skaut.cz", login="admin", password=User.hash_password("Password1"), first_name="Admin", last_name="Skaut")
+        role1 = Role(name="Admin", code="admin")
+        role2 = Role(name="Leader", code="leader")
+        role3 = Role(name="Mentor", code="mentor")
+        role4 = Role(name="Member", code="member")
+        troop = Troop(name="MainTroop", number=1, code="01")
+        permission = Permission(role=role1, troop=troop, user=user)
+
+        transaction.add(user, role1, role2, role3, role4, troop, permission)
+        transaction.commit()

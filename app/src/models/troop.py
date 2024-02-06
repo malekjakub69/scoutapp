@@ -40,3 +40,16 @@ class Troop(BaseIdModel):
     register = db.relationship("Register", back_populates="troop")
 
     meets = db.relationship("Meet", back_populates="troop")
+
+    @classmethod
+    def get_subtree(cls, troop_id):
+
+        def _get_subtree_recursive(troop_id):
+            child_troops = cls.query.filter_by(parent_troop_id=troop_id).all()
+            subtree = []
+            for child_troop in child_troops:
+                subtree.append(child_troop)
+                subtree.extend(_get_subtree_recursive(child_troop.id))
+            return subtree
+
+        return _get_subtree_recursive(troop_id)

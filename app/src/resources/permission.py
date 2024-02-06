@@ -16,24 +16,37 @@ from src.translations.translator import Translator
 class PermissionResource(BaseResource):
     @authorize_all()
     def post(self):
-        data = deserialize("PermissionSchema", request.get_json())
+        data = deserialize("PermissionsSchema", request.get_json())
         logged_user: User = User.get_by_email_or_login(get_jwt_identity())
 
-        if not (Role.get_by_id(data["role_id"])):
-            raise NotFound(Translator.localize("entity_not_found", Translator.localize("role")))
-
-        if not (Troop.get_by_id(data["troop_id"])):
-            raise NotFound(Translator.localize("entity_not_found", Translator.localize("troop")))
-
-        if logged_user.current_troop_id == data["troop_id"] and logged_user.id == data["user_id"]:
+        if logged_user.id == data["user_id"]:
             raise Conflict(Translator.localize("permission_denied"))
-        exist_permission = Permission.get_item(data["user_id"], data["troop_id"], data["role_id"])
-        if exist_permission:
-            raise Conflict(Translator.localize("permission_exist"))
 
         transaction = Transaction()
-        permission = Permission(**data)
-        transaction.add(permission)
+
+        exist_permission = Permission.get_item_by_user_id(data["user_id"])
+        transaction.remove(*exist_permission)
+
+        permissions = []
+
+        for permission in data["permissions"]:
+            if not (Role.get_by_id(permission["role_id"])):
+                raise NotFound(Translator.localize("entity_not_found", Translator.localize("role")))
+
+            if not (troop := Troop.get_by_id(permission["troop_id"])):
+                raise NotFound(Translator.localize("entity_not_found", Translator.localize("troop")))
+
+            permissions.append(Permission(**permission, user_id=data["user_id"]))
+
+            subordinates_troops = Troop.get_subtree(troop.id)
+
+            for subordinate_troop in subordinates_troops:
+                subordinate_troop.id
+                permissions.append(Permission(role_id=permission["role_id"], troop_id=subordinate_troop.id, user_id=data["user_id"]))
+
+        new_permissions = set(permissions)
+
+        transaction.merge(*list(new_permissions))
         transaction.commit()
 
-        return (self.result(serialize("PermissionSchema", permission)), 201)
+        return (self.result(serialize("PermissionSchema", permissions)), 201)

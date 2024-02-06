@@ -19,8 +19,8 @@ class RolesResource(BaseResource):
 class RoleResource(BaseResource):
     @authorize_all()
     def get(self, role_id: int):
-        troop = Role.get_by_id(role_id)
-        return self.result(serialize("RoleSchema", troop))
+        role = Role.get_by_id(role_id)
+        return self.result(serialize("RoleSchema", role))
 
     @authorize_all()
     def post(self):
@@ -37,7 +37,7 @@ class RoleResource(BaseResource):
 
     @authorize_all()
     def delete(self, role_id: int):
-        if not (troop := Role.get_by_id(role_id)):
+        if not (role := Role.get_by_id(role_id)):
             raise NotFound(Translator.localize("entity_not_found"))
-        troop.delete()
+        role.delete()
         return {"role": Translator.localize("entity_deleted", role_id)}

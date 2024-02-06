@@ -5,7 +5,7 @@ from src.schemas.base import BaseIdSchema
 
 class UserSchema(BaseIdSchema):
     first_name = fields.String(required=False, allow_none=True)
-    surname = fields.String(required=False, allow_none=True)
+    last_name = fields.String(required=False, allow_none=True)
     login = fields.String(required=False, allow_none=True)
     email = fields.Email(required=True)
     last_login = fields.DateTime(required=True, dump_only=True)
