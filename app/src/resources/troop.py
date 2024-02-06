@@ -1,3 +1,6 @@
+from flask_jwt_extended import get_jwt_identity
+from src.models.role import Role
+from src.models.user import User
 from src.models.permission import Permission
 from src.resources.base import BaseResource
 from src.models.base import Transaction
@@ -33,16 +36,21 @@ class TroopResource(BaseResource):
         if not (parent_troop := Troop.get_by_id(data["parent_troop_id"])):
             raise NotFound(Translator.localize("entity_not_found", Translator.localize("parent_troop")))
 
+        # Create new troop
         transaction = Transaction()
         troop = Troop(**data)
         transaction.add(troop)
         transaction.commit()
 
+        # Add permissions to the new troop from the parent troop
         permissions = parent_troop.permissions
 
         new_permissions = []
         for permission in permissions:
             new_permissions.append(Permission(role_id=permission.role_id, troop=troop, user_id=permission.user_id))
+
+        # Add admin permissions to the user who created the troop
+        new_permissions.append(Permission(role_id=Role.get_by_code("admin").id, troop=troop, user=User.get_by_email_or_login(get_jwt_identity())))
 
         transaction.merge(*new_permissions)
         transaction.commit()
