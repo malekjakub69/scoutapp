@@ -1,6 +1,6 @@
 from flask_jwt_extended import get_jwt_identity
 from src.models.role import Role
-from src.models.troop import Troop
+from src.models.unit import Unit
 from src.models.user import User
 from src.resources.base import BaseResource
 from src.models.base import Transaction
@@ -33,16 +33,16 @@ class PermissionResource(BaseResource):
             if not (Role.get_by_id(permission["role_id"])):
                 raise NotFound(Translator.localize("entity_not_found", Translator.localize("role")))
 
-            if not (troop := Troop.get_by_id(permission["troop_id"])):
-                raise NotFound(Translator.localize("entity_not_found", Translator.localize("troop")))
+            if not (unit := Unit.get_by_id(permission["unit_id"])):
+                raise NotFound(Translator.localize("entity_not_found", Translator.localize("unit")))
 
             permissions.append(Permission(**permission, user_id=data["user_id"]))
 
-            subordinates_troops = Troop.get_subtree(troop.id)
+            subordinates_units = Unit.get_subtree(unit.id)
 
-            for subordinate_troop in subordinates_troops:
-                subordinate_troop.id
-                permissions.append(Permission(role_id=permission["role_id"], troop_id=subordinate_troop.id, user_id=data["user_id"]))
+            for subordinate_unit in subordinates_units:
+                subordinate_unit.id
+                permissions.append(Permission(role_id=permission["role_id"], unit_id=subordinate_unit.id, user_id=data["user_id"]))
 
         new_permissions = set(permissions)
 

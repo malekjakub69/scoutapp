@@ -39,7 +39,7 @@ def create_app():
                 upgrade()
 
     _ = Migrate(app, db)
-    # handle_migrations()
+    handle_migrations()
 
     # init other extensions
     _ = CORS(app)

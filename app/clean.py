@@ -1,13 +1,13 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from src.models.role import Role
-from src.models.troop import Troop
+from src.models.unit import Unit
 from src.models.user import User
-from src.models.member import Member
+from app.src.models.person import Person
 from src.models.points import Points
 from src.models.meet import Meet
 from src.models.register import Register
-from src.models.check_member import CheckMember
+from src.models.check_person import CheckPerson
 from src.models.permission import Permission
 from src.models.revoked_tokens import RevokedToken
 
@@ -20,15 +20,15 @@ def reset_database():
     # Vymažeme všechny tabulky
     try:
         db.session.query(RevokedToken).delete()
-        db.session.query(CheckMember).delete()
+        db.session.query(CheckPerson).delete()
         db.session.query(Register).delete()
         db.session.query(Meet).delete()
         db.session.query(Points).delete()
-        db.session.query(Member).delete()
+        db.session.query(Person).delete()
         db.session.query(Permission).delete()
         db.session.query(Role).delete()
         db.session.query(User).delete()
-        db.session.query(Troop).delete()
+        db.session.query(Unit).delete()
 
         db.session.commit()
     except:

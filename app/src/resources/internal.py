@@ -4,7 +4,7 @@ from src.models.permission import Permission
 from src.models.role import Role
 from src.models.user import User
 
-from src.models.troop import Troop
+from src.models.unit import Unit
 
 
 class HealthCheckResource(Resource):
@@ -21,12 +21,12 @@ class HealthCheckDatabaseResource(Resource):
 
     def get(self):
         try:
-            role = Troop.query.filter_by(code="001.11").first()
+            role = Unit.query.filter_by(code="001.11").first()
             if role == None:
-                new_troop = Troop(name="test", number=1, code="001.11")
-                new_troop.save()
+                new_unit = Unit(name="test", number=1, code="001.11")
+                new_unit.save()
 
-            role = Troop.query.filter_by(code="001.11").first()
+            role = Unit.query.filter_by(code="001.11").first()
 
             role.delete()
 
@@ -50,9 +50,9 @@ class InitDb(Resource):
         role1 = Role(name="Admin", code="admin")
         role2 = Role(name="Leader", code="leader")
         role3 = Role(name="Mentor", code="mentor")
-        role4 = Role(name="Member", code="member")
-        troop = Troop(name="MainTroop", number=1, code="01")
-        permission = Permission(role=role1, troop=troop, user=user)
+        role4 = Role(name="Person", code="person")
+        unit = Unit(name="MainUnit", number=1, code="01")
+        permission = Permission(role=role1, unit=unit, user=user)
 
-        transaction.add(user, role1, role2, role3, role4, troop, permission)
+        transaction.add(user, role1, role2, role3, role4, unit, permission)
         transaction.commit()

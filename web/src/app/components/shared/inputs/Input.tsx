@@ -14,8 +14,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     const { label, className, required, innerClassName, labelClassName, dirty, error, theme = 'dark', ...inputProps } = props;
 
     return (
-        <div className={tw(className, 'relative')}>
-            <label htmlFor={`scoutInput-${inputProps.name}`} >
+        <div className={tw(className, 'relative mb-4 flex flex-col')}>
+            <label htmlFor={`scoutInput-${inputProps.name}`} className='mr-2' >
                 {label || ''}
             </label>
 

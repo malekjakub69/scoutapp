@@ -30,7 +30,7 @@ export type UserUpdate = {
 export type User = {
     id: number;
     first_name: string;
-    surname: string;
+    last_name: string;
     email: string;
 };
 

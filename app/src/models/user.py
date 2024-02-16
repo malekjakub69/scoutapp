@@ -20,8 +20,8 @@ class User(BaseIdModel):
         last_name (str): The user's last name.
         last_login (datetime): The date and time of the user's last login.
         roles (List[Role]): The roles assigned to the user.
-        current_troop (Troop): The user's current troop.
-        member (Member): The member associated with the user.
+        current_unit (Unit): The user's current unit.
+        person (Person): The person associated with the user.
     """
 
     __tablename__ = "user"
@@ -38,13 +38,13 @@ class User(BaseIdModel):
     ## Have role
     permissions = db.relationship("Permission", back_populates="user")
 
-    ## Current troop
-    current_troop_id = db.Column(db.Integer, db.ForeignKey("troop.id"), nullable=True)
-    current_troop = db.relationship("Troop", back_populates="users", uselist=False)
+    ## Current unit
+    current_unit_id = db.Column(db.Integer, db.ForeignKey("unit.id"), nullable=True)
+    current_unit = db.relationship("Unit", back_populates="users", uselist=False)
 
     # 1:1
-    member_id = db.Column(db.Integer, db.ForeignKey("member.id"), nullable=True)
-    member = db.relationship("Member", back_populates="user", uselist=False)
+    person_id = db.Column(db.Integer, db.ForeignKey("person.id"), nullable=True)
+    person = db.relationship("Person", back_populates="user", uselist=False)
 
     @classmethod
     def verify_password(cls, original_hash: str, password: str) -> bool:

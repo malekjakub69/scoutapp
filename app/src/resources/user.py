@@ -1,6 +1,6 @@
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from src.models.base import Transaction
-from src.models.troop import Troop
+from src.models.unit import Unit
 from src.resources.base import BaseResource
 
 from src.models.user import User
@@ -40,16 +40,16 @@ class UserResource(BaseResource):
 
     @authorize_all()
     def post(self):
-        data = deserialize("TroopSchema", request.get_json())
-        exist_troop = Troop.get_by_code(data["code"])
-        if exist_troop:
-            raise Conflict(Translator.localize("troop_exist"))
+        data = deserialize("UnitSchema", request.get_json())
+        exist_unit = Unit.get_by_code(data["code"])
+        if exist_unit:
+            raise Conflict(Translator.localize("unit_exist"))
         transaction = Transaction()
-        troop = Troop(**data)
-        transaction.add(troop)
+        unit = Unit(**data)
+        transaction.add(unit)
         transaction.commit()
 
-        return (self.result(serialize("UserSchema", troop)), 201)
+        return (self.result(serialize("UserSchema", unit)), 201)
 
     @authorize_all()
     def delete(self, user_id: int):
@@ -59,16 +59,16 @@ class UserResource(BaseResource):
         return {"user:": Translator.localize("entity_deleted", user_id)}
 
 
-class UserChangeTroop(BaseResource):
+class UserChangeUnit(BaseResource):
     @authorize_all()
     def post(self):
         user = self.current_user
-        data = deserialize("UserChangeTroopSchema", request.get_json())
-        if not (troop := Troop.get_by_id(data["troop_id"])):
-            raise NotFound(Translator.localize("entity_not_found", Translator.localize("troop")))
-        avaliable_troop_ids = [permission.troop_id for permission in user.permissions]
-        if troop.id not in avaliable_troop_ids:
-            raise BadRequest(Translator.localize("troop_not_available", troop.name))
-        user.current_troop_id = troop.id
+        data = deserialize("UserChangeUnitSchema", request.get_json())
+        if not (unit := Unit.get_by_id(data["unit_id"])):
+            raise NotFound(Translator.localize("entity_not_found", Translator.localize("unit")))
+        avaliable_unit_ids = [permission.unit_id for permission in user.permissions]
+        if unit.id not in avaliable_unit_ids:
+            raise BadRequest(Translator.localize("unit_not_available", unit.name))
+        user.current_unit_id = unit.id
         user.save()
         return self.result(serialize("UserSchema", user))

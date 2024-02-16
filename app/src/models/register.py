@@ -4,19 +4,19 @@ from src.models.base import BaseIdModel
 
 class Register(BaseIdModel):
     """
-    Represents a registration of a member to a troop.
+    Represents a registration of a person to a unit.
 
     Attributes:
-        member_id (int): The ID of the member being registered.
-        member (Member): The member being registered.
-        troop_id (int): The ID of the troop the member is being registered to.
-        troop (Troop): The troop the member is being registered to.
+        person_id (int): The ID of the person being registered.
+        person (Person): The person being registered.
+        unit_id (int): The ID of the unit the person is being registered to.
+        unit (Unit): The unit the person is being registered to.
     """
 
     __tablename__ = "register"
 
-    member_id = db.Column(db.Integer, db.ForeignKey("member.id"), nullable=False)
-    member = db.relationship("Member", back_populates="register")
+    person_id = db.Column(db.Integer, db.ForeignKey("person.id"), nullable=False)
+    person = db.relationship("Person", back_populates="register")
 
-    troop_id = db.Column(db.Integer, db.ForeignKey("troop.id"), nullable=False)
-    troop = db.relationship("Troop", back_populates="register")
+    unit_id = db.Column(db.Integer, db.ForeignKey("unit.id"), nullable=False)
+    unit = db.relationship("Unit", back_populates="register")

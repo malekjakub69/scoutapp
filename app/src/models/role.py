@@ -4,7 +4,7 @@ from src.models.base import BaseIdModel
 
 class Role(BaseIdModel):
     """
-    Represents a role that a user can have in the system, such as a troop leader or administrator.
+    Represents a role that a user can have in the system, such as a unit leader or administrator.
 
     Attributes:
         name (str): The name of the role.

@@ -83,7 +83,7 @@ class Authenticate(Resource):
         # Returns current user if token is valid. Otherwise a client error is returned.
         current_user = User.get_by_email_or_login(get_jwt_identity())
         if current_user:
-            return serialize("UserSchemaExtended", current_user)
+            return serialize("UserSchema", current_user)
         raise Unauthorized(Translator.localize("entity_not_found", Translator.localize("user")))
 
 

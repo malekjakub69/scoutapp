@@ -20,8 +20,8 @@ def authorize_roles(role_codes: list):
             if not user.active:
                 raise Unauthorized(Translator.localize("user_not_active"))
             if user.permissions:
-                troop_permissions = [permission for permission in user.permissions if permission.troop_id == user.current_troop_id]
-                if not troop_permissions or troop_permissions[0].role.code not in role_codes:
+                unit_permissions = [permission for permission in user.permissions if permission.unit_id == user.current_unit_id]
+                if not unit_permissions or unit_permissions[0].role.code not in role_codes:
                     raise Unauthorized(Translator.localize("unauthorized"))
             else:
                 raise Unauthorized(Translator.localize("unauthorized"))
@@ -42,7 +42,7 @@ def authorize_roles_except(role_codes: list):
                 raise NotFound("auth: User does not exist!")
             if not user.active:
                 raise Unauthorized(Translator.localize("user_not_active"))
-            if user.permissions.filter_by(troop_id=user.current_troop_id)[0].role.code in role_codes:
+            if user.permissions.filter_by(unit_id=user.current_unit_id)[0].role.code in role_codes:
                 raise Unauthorized(Translator.localize("unauthorized"))
             return func(*args, **kwargs)
 

@@ -1,18 +1,18 @@
 import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LoginForm } from 'src/app/layouts/auth/LoginForm';
 import { Button } from '../components/shared/inputs/Button';
+import { RegisterForm } from '../layouts/auth/RegisterForm';
 
-const LoginPage: FC = () => {
+const RegisterPage: FC = () => {
 
     const navigate = useNavigate();
+
     return (
             <div className="flex flex-col">
-                <LoginForm className={'grow bg-white'} />
-                <Button onClick={() => navigate("/register")}>Register</Button>
+                <RegisterForm className={'grow bg-white'} />
+                <Button onClick={() => navigate("/login")}>Log in</Button>
             </div>
     );
 };
 
-export default LoginPage;
- 
+export default RegisterPage;

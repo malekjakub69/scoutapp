@@ -4,7 +4,7 @@ from src.schemas.base import BaseIdSchema
 
 
 class PermissionSchema(BaseIdSchema):
-    troop_id = fields.Integer(required=True, allow_none=False)
+    unit_id = fields.Integer(required=True, allow_none=False)
     role_id = fields.Integer(required=True, allow_none=False)
 
 

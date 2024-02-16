@@ -2,51 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-    font-family: SKAUT-Bold;
-    src: url('./assets/fonts/SKAUT-Bold.otf') format('opentype');
-}
-
-@layer base {
-    * {
-        font-family: 'SKAUT-Bold';
-    }
-}
 
 @layer components {
     /* ---- INPUTS ---- */
 
     /* -- BUTTONS -- */
-
-    .scout-btn {
-        @apply relative uppercase border-2  rounded-lg p-2;
-    }
-
-    .scout-btn__primary {
-        @apply scout-btn border-scout-logo-yellow3 bg-scout-logo-yellow1 text-scout-logo-blue1;
-    }
-
-    .scout-btn__secondary {
-        @apply scout-btn border-scout-logo-blue3 bg-scout-logo-blue1 text-scout-logo-yellow1;
-    }
-
-    .scout-btn__delete {
-        @apply scout-btn border-error-700 bg-error;
-    }
-
-    .scout-btn-dark {
-        @apply relative uppercase border-2 rounded-lg p-2 text-black;
-    }
-
-    .scout-btn-dark__primary {
-        @apply scout-btn-dark border-scout-logo-yellow1 bg-scout-logo-yellow3;
-    }
-
-    .scout-btn-dark__secondary {
-        @apply scout-btn-dark border-scout-logo-blue3 bg-scout-logo-blue1 text-scout-logo-yellow1;
-    }
-
-    .scout-btn-dark__delete {
-        @apply scout-btn-dark border-error-700 bg-error;
-    }
 }
