@@ -1,3 +1,5 @@
+from ast import List
+from src.models.register import Register
 from src.models import db
 from src.models.base import BaseIdModel
 

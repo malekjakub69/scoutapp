@@ -9,7 +9,7 @@ class UserSchema(BaseIdSchema):
     login = fields.String(required=False, allow_none=True)
     email = fields.Email(required=True)
     last_login = fields.DateTime(required=True, dump_only=True)
-    current_unit_id = fields.Integer(required=False, allow_none=True)
+    current_unit = fields.Nested("UnitSchema")
     permission = fields.List(fields.Nested(PermissionSchema), dump_only=True)
 
 

@@ -57,6 +57,10 @@ class BaseModel(db.Model):
         return cls.query.filter_by(id=id_).first()
 
     @classmethod
+    def get_by_ids(cls: Type[T], ids_) -> T:
+        return cls.query.filter(cls.id.in_(ids_)).all()
+
+    @classmethod
     def get_by_code(cls: Type[T], code_: str) -> T:
         return cls.query.filter_by(code=code_).first()
 

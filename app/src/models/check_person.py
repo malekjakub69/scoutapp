@@ -35,3 +35,7 @@ class CheckPerson(BaseIdModel):
     @classmethod
     def get_by_person_hash(cls, person_hash: str):
         return cls.query.filter_by(person_hash=person_hash).first()
+
+    @classmethod
+    def get_by_meet_id(cls, meet_id):
+        return cls.query.filter_by(meet_id=meet_id).all()

@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FC } from "react";
-import { useForm } from "react-hook-form";
+import { FC } from 'react';
+import { useForm } from 'react-hook-form';
 import { Button } from 'src/app/components/shared/inputs/Button';
 import Input from 'src/app/components/shared/inputs/Input';
 import useLogin from 'src/app/hooks/useLogin';
@@ -20,9 +20,8 @@ const formSchema = object().shape({
     password: string().required('Please enter your password')
 });
 
-export const LoginForm: FC<IProps> = ({  }) => {
-    
-    const { login, isLoading, isError } = useLogin();
+export const LoginForm: FC<IProps> = ({}) => {
+    const { login, isLoading, isError, errorMessage } = useLogin();
 
     const {
         handleSubmit,
@@ -33,16 +32,17 @@ export const LoginForm: FC<IProps> = ({  }) => {
     });
 
     const handleSend = (data: FormValues) => {
-        login(data)
-    }
+        login(data);
+    };
 
     return (
         <form onSubmit={handleSubmit(handleSend)} className="flex flex-col justify-center gap-2 m-2">
-            <Input {...register('login')} label="Login" error={errors.login?.message} />
-            <Input {...register('password')}  label="Password" type="password" error={errors.password?.message} />
-            <div className={'basis-full text-sm text-error h-4 mb-2'}>{isError ? 'Nesprávné přihlašovací údaje' : undefined}</div>
-            <Button status={isLoading ? "loading" : undefined } type="submit">Log in</Button>
-            
+            <Input {...register('login')} defaultValue="admin" label="Login" error={errors.login?.message} />
+            <Input {...register('password')} defaultValue="Password1" label="Password" type="password" error={errors.password?.message} />
+            <div className={'basis-full text-sm text-red h-4 mb-2'}>{errorMessage}</div>
+            <Button status={isLoading ? 'loading' : undefined} type="submit">
+                Log in
+            </Button>
         </form>
-    )
-}
+    );
+};

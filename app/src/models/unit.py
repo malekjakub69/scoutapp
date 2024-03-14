@@ -46,10 +46,20 @@ class Unit(BaseIdModel):
 
         def _get_subtree_recursive(unit_id):
             child_units = cls.query.filter_by(parent_unit_id=unit_id).all()
-            subtree = []
+            subtree = [Unit.get_by_id(unit_id)]
             for child_unit in child_units:
                 subtree.append(child_unit)
                 subtree.extend(_get_subtree_recursive(child_unit.id))
             return subtree
 
         return _get_subtree_recursive(unit_id)
+
+    def get_avaliable_unit_ids(self, user):
+        # 2 všechny jednotky, ke kterým má uživatel přístup
+        avaliable_units = [permission.unit for permission in user.permissions]
+        # 3 všechny podřízené jednotky včetně aktuálních
+        avaliable_all_units = list(set().union(*[set(Unit.get_subtree(unit.id)) for unit in avaliable_units]))
+        # 4 všechny ID jednotek
+        avaliable_all_unit_ids = [unit.id for unit in avaliable_all_units]
+        
+        return avaliable_all_unit_ids

@@ -1,7 +1,9 @@
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from src.models.unit import Unit
+from src.models.register import Register
+from src.models.user import User
 from src.models.base import Transaction
 from src.resources.base import BaseResource
-
 from src.models.person import Person
 from src.schemas import deserialize, serialize
 from src.translations.translator import Translator
@@ -13,7 +15,13 @@ from src.authorization.decorators import authorize_all
 class PersonsResource(BaseResource):
     @authorize_all()
     def get(self):
-        persons = Person.get_items()
+        # 1 přihlášený uživatel
+        logged_user: User = User.get_by_email_or_login(get_jwt_identity())
+
+        avaliable_all_unit_ids = Unit.get_avaliable_unit_ids(logged_user)
+
+        registers = Register.get_by_units(avaliable_all_unit_ids)
+        persons = [register.person for register in registers]
         return self.result(serialize("PersonSchema", persons))
 
 

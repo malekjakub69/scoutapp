@@ -20,3 +20,7 @@ class Register(BaseIdModel):
 
     unit_id = db.Column(db.Integer, db.ForeignKey("unit.id"), nullable=False)
     unit = db.relationship("Unit", back_populates="register")
+
+    @classmethod
+    def get_by_units(cls, units):
+        return cls.query.filter(cls.unit_id.in_(units)).all()

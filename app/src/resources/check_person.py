@@ -1,4 +1,6 @@
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from src.models.unit import Unit
+from src.models.user import User
 from src.models.base import Transaction
 from src.resources.base import BaseResource
 
@@ -12,8 +14,8 @@ from src.authorization.decorators import authorize_all
 
 class CheckPersonsResource(BaseResource):
     @authorize_all()
-    def get(self):
-        check_persons = CheckPerson.get_items()
+    def get(self, meet_id: int):
+        check_persons = CheckPerson.get_by_meet_id(meet_id)
         return self.result(serialize("CheckPersonSchema", check_persons))
 
 
@@ -22,6 +24,16 @@ class CheckPersonByHashResource(BaseResource):
     def get(self, person_hash: str):
         check_persons = CheckPerson.get_by_person_hash(person_hash)
         return self.result(serialize("CheckPersonSchema", check_persons))
+
+    def put(self, id: int):
+        data = deserialize("CheckPersonConfirmSchema", request.get_json())
+        check: CheckPerson = CheckPerson.get_by_id(id)
+        check.sent = True
+        check.confirm = data["confirm"]
+        check.no_reason = data["no_reason"]
+        check.other_desc = data["other_desc"]
+        check.save()
+        return self.result(serialize("CheckPersonSchema", check))
 
 
 class CheckPersonResource(BaseResource):

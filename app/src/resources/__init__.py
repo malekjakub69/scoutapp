@@ -27,6 +27,7 @@ def register_resources(api, v):
     api.add_resource(UserSelfResource, f"{v}/user")  # GET single
     api.add_resource(UserResource, f"{v}/user/<int:user_id>")  # GET single, POST, DELETE
     api.add_resource(UserChangeUnit, f"{v}/change_unit")  # POST
+    api.add_resource(UserAvaliableUnits, f"{v}/avaliable_units")  # GET
     # Unit
     api.add_resource(UnitsResource, f"{v}/units")  # GET all
     api.add_resource(UnitResource, f"{v}/unit", f"{v}/unit/<int:unit_id>")  # GET single, POST, DELETE
@@ -39,7 +40,7 @@ def register_resources(api, v):
     api.add_resource(PersonsResource, f"{v}/persons")  # GET all
     api.add_resource(PersonResource, f"{v}/person", f"{v}/person/<int:person_id>")  # GET single, POST, DELETE
     # CheckPerson
-    api.add_resource(CheckPersonsResource, f"{v}/check_persons")  # GET all
+    api.add_resource(CheckPersonsResource, f"{v}/check_person<int:meet_id>")  # GET all
     api.add_resource(CheckPersonResource, f"{v}/check_person", f"{v}/check_person/<int:check_person_id>")  #  GET single, POST, DELETE
     api.add_resource(CheckPersonByHashResource, f"{v}/check_person/<string:person_hash>")  # GET single
     # Meet

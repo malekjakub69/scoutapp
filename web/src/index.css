@@ -2,9 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* design expand icon from react pro sidebar  */
+span.ps-submenu-expand-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/* remove border from sidebar  */
+aside.ps-sidebar-root {
+    border: 0px;
+}
+
+div.ps-sidebar-container {
+    overflow: visible;
+}
+
+a.ps-menu-button:hover,
+.ps-submenu-content,
+.ps-menuitem-root {
+    background-color: #fff0 !important;
+}
 
 @layer components {
-    /* ---- INPUTS ---- */
+    .menu-icon {
+        @apply fill-white w-6;
+    }
 
-    /* -- BUTTONS -- */
+    .menu-bg {
+        @apply bg-green;
+    }
+
+    .menu-item-bg {
+        @apply hover:bg-green-500;
+    }
 }

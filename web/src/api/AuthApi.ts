@@ -1,4 +1,4 @@
-import { BaseApiType, LoginResponse, Password, UserFull, UserLogin, UserUpdate } from '../app/types';
+import { BaseApiType, LoginResponse, Password, UserFull, UserLogin } from '../app/types';
 import { BaseApi } from './index';
 
 export async function authenticate(): Promise<UserFull> {
@@ -30,11 +30,6 @@ export async function refreshAccessToken(): Promise<{ token: string }> {
 
     const resp = await BaseApi.postBase<{ access_token: string }>('/token/refresh', {}, requestConfig);
     return { token: resp.data.access_token };
-}
-
-export async function updateUser(user: UserUpdate): Promise<BaseApiType<UserFull>> {
-    const response = await BaseApi.put<UserFull>('/users/profile', user);
-    return response;
 }
 
 export async function updatePassword(password: Password): Promise<BaseApiType<UserFull>> {

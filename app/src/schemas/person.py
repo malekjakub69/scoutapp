@@ -13,5 +13,5 @@ class PersonSchema(BaseIdSchema):
     nickname = fields.String(required=False, allow_none=True)
     register = fields.List(fields.Nested("RegisterSchema"), dump_only=True)
     user = fields.Nested("UserSchema", dump_only=True)
-    points = fields.List(fields.Nested("PointsSchema"), dump_only=True)
-    check_persons = fields.List(fields.Nested("CheckPersonSchema"), dump_only=True)
+    # points = fields.List(fields.Nested("PointsSchema"), dump_only=True)
+    # check_persons = fields.List(fields.Nested("CheckPersonSchema"), dump_only=True)

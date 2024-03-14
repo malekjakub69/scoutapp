@@ -62,7 +62,7 @@ class UserResource(BaseResource):
 class UserChangeUnit(BaseResource):
     @authorize_all()
     def post(self):
-        user = self.current_user
+        user = User.get_by_email_or_login(get_jwt_identity())
         data = deserialize("UserChangeUnitSchema", request.get_json())
         if not (unit := Unit.get_by_id(data["unit_id"])):
             raise NotFound(Translator.localize("entity_not_found", Translator.localize("unit")))
@@ -72,3 +72,12 @@ class UserChangeUnit(BaseResource):
         user.current_unit_id = unit.id
         user.save()
         return self.result(serialize("UserSchema", user))
+
+
+class UserAvaliableUnits(BaseResource):
+    @authorize_all()
+    def get(self):
+        user = User.get_by_email_or_login(get_jwt_identity())
+        avaliable_unit_ids = [permission.unit_id for permission in user.permissions]
+        avaliable_units = Unit.get_by_ids(avaliable_unit_ids)
+        return self.result(serialize("UnitSchema", avaliable_units))
